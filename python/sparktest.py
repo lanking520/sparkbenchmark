@@ -10,19 +10,20 @@ def downloadFromUrl(url):
     tmp = tempfile.gettempdir()
     modelDir = tmp + "/benchmodel"
     modelName = url.split("/")[-1].split("\\.")[0]
-    modelPath = modelDir + "/" + modelName
+    modelPath = modelDir + "/" + modelName + ".pt"
+    zipPath = modelDir + "/" + modelName + ".zip"
     if os.path.exists(modelPath):
-        return modelPath + "/" + modelName + ".pt"
+        return modelPath
     # Start download
     filedata = request.urlopen(url)
     datatowrite = filedata.read()
     os.mkdir(modelDir)
 
-    with open(modelDir + "/" + modelName + ".zip", 'wb') as f:
+    with open(zipPath, 'wb') as f:
         f.write(datatowrite)
-    with zipfile.ZipFile(modelPath + ".zip", 'r') as zip_ref:
+    with zipfile.ZipFile(zipPath, 'r') as zip_ref:
         zip_ref.extractall(modelDir)
-    return modelPath + "/" + modelName + ".pt"
+    return modelPath
 
 def inferenceOnPartion(iter):
     file = downloadFromUrl("https://djl-ai.s3.amazonaws.com/resources/demo/pytorch/traced_resnet18.zip")
