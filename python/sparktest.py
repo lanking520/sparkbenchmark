@@ -2,40 +2,36 @@ from pyspark.sql import SparkSession
 import torch
 from urllib import request
 import tempfile
-import os
 import zipfile
 PARTITION_NUM = 10
 
 def downloadFromUrl(url):
-    tmp = tempfile.gettempdir()
-    modelDir = tmp + "/benchmodel"
+    tmp = tempfile.TemporaryDirectory()
+    modelDir = tmp.name
     modelName = url.split("/")[-1].split(".")[0]
     modelPath = modelDir + "/" + modelName + ".pt"
     zipPath = modelDir + "/" + modelName + ".zip"
-    if os.path.exists(modelPath):
-        return modelPath
     # Start download
     filedata = request.urlopen(url)
     datatowrite = filedata.read()
-    os.mkdir(modelDir)
 
     with open(zipPath, 'wb') as f:
         f.write(datatowrite)
     with zipfile.ZipFile(zipPath, 'r') as zip_ref:
         zip_ref.extractall(modelDir)
-    return modelPath
+    return modelPath, tmp
 
 def inferenceOnPartion(iter):
-    file = downloadFromUrl("https://djl-ai.s3.amazonaws.com/resources/demo/pytorch/traced_resnet18.zip")
+    file, tmp = downloadFromUrl("https://djl-ai.s3.amazonaws.com/resources/demo/pytorch/traced_resnet18.zip")
     model = torch.jit.load(file)
     model.eval()
     result = []
+    tmp.cleanup()
     for _ in iter:
         t = torch.ones((1, 3, 224, 224))
         out = model(t)
         result.append(str(out.shape))
     return result
-
 
 spark = SparkSession \
     .builder \
