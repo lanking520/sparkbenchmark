@@ -3,7 +3,6 @@ import torch
 from urllib import request
 import tempfile
 import zipfile
-PARTITION_NUM = 16
 
 def downloadFromUrl(url):
     tmp = tempfile.TemporaryDirectory()
@@ -23,8 +22,6 @@ def downloadFromUrl(url):
 
 def inferenceOnPartion(iter):
     file, tmp = downloadFromUrl("https://djl-ai.s3.amazonaws.com/resources/demo/pytorch/traced_resnet18.zip")
-    torch.set_num_threads(1)
-    torch.set_num_interop_threads(2)
     model = torch.jit.load(file)
     model.eval()
     result = []
@@ -43,8 +40,7 @@ spark = SparkSession \
 
 
 df = spark.read.csv(
-    "players.csv", header=True, mode="DROPMALFORMED") \
-    .repartition(PARTITION_NUM)
+    "players.csv", header=True, mode="DROPMALFORMED")
 
 print('Partition cnt: ' + str(df.rdd.getNumPartitions()))
 
