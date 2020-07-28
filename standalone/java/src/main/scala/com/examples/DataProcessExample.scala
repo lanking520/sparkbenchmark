@@ -60,8 +60,6 @@ object DataProcessExample {
     val sc = new SparkContext(conf)
 
     val partitions = sc.textFile("players.csv")
-    // Start time measurement
-    val startTime = System.nanoTime
     // Start assign work for each worker node
     val result = partitions.mapPartitions(partition => {
       // We need to make sure predictor are spawned on a executor basis to save memory
@@ -72,9 +70,6 @@ object DataProcessExample {
       })
     })
     // The real execution started here
-    val data = result.collect()
-    val estimatedTime = System.nanoTime - startTime
-    println(data)
-    println(estimatedTime)
+    result.collect()
   }
 }
