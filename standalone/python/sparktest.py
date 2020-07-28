@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 import torch
 from urllib import request
 import tempfile
+import time
 import zipfile
 
 def downloadFromUrl(url):
@@ -45,6 +46,9 @@ df = spark.read.csv(
 print('Partition cnt: ' + str(df.rdd.getNumPartitions()))
 
 rdd = df.rdd.mapPartitions(inferenceOnPartion)
-result = rdd.collect()
 
+start = time.process_time()
+result = rdd.collect()
+elapsed_time = time.process_time() - start
 print(result)
+print(elapsed_time)

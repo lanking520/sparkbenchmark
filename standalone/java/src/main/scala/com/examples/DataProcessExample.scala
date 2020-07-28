@@ -24,7 +24,6 @@ import org.apache.spark.{SparkConf, SparkContext}
  */
 object DataProcessExample {
 
-  private val NUM_PARTITION = 10
   private lazy val model = loadModel()
 
   def loadModel(): ZooModel[NDList, NDList] = {
@@ -60,7 +59,7 @@ object DataProcessExample {
       .setMaster("spark://localhost:7077")
     val sc = new SparkContext(conf)
 
-    val partitions = sc.textFile("players.csv").repartition(NUM_PARTITION)
+    val partitions = sc.textFile("players.csv")
     // Start assign work for each worker node
     val result = partitions.mapPartitions(partition => {
       // We need to make sure predictor are spawned on a executor basis to save memory
@@ -71,7 +70,10 @@ object DataProcessExample {
       })
     })
     // The real execution started here
+    val startTime = System.nanoTime
     val data = result.collect()
+    val estimatedTime = System.nanoTime - startTime
     println(data)
+    println(estimatedTime)
   }
 }
