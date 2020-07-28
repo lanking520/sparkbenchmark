@@ -6,3 +6,5 @@ export PYSPARK_DRIVER_PYTHON=python3
 export PYSPARK_PYTHON=python3
 ../spark/sbin/start-master.sh
 ../spark/sbin/start-slave.sh spark://localhost:7077
+rm -rf players.csv
+python3 csvgen.py

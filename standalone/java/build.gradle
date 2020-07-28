@@ -1,10 +1,13 @@
 plugins {
     id 'scala'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'java'
 }
 
 group "com.example"
 version "1.0-SNAPSHOT"
+
 
 repositories {
     jcenter()
@@ -19,7 +22,7 @@ dependencies {
     implementation "ai.djl:api:0.6.0"
 
     runtimeOnly "ai.djl.pytorch:pytorch-model-zoo:0.6.0"
-    runtimeOnly "ai.djl.pytorch:pytorch-native-auto:1.5.0"
+    runtimeOnly "ai.djl.pytorch:pytorch-native-cpu:1.5.0:linux-x86_64"
 }
 
 configure(this) {
@@ -31,7 +34,7 @@ compileScala {
 }
 
 application {
-    mainClassName = System.getProperty("main", "com.examples.Example")
+    mainClassName = System.getProperty("main", "com.examples.DataProcessExample")
 }
 
 tasks.distTar.enabled = false
