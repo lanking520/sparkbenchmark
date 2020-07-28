@@ -45,10 +45,9 @@ df = spark.read.csv(
 
 print('Partition cnt: ' + str(df.rdd.getNumPartitions()))
 
-rdd = df.rdd.mapPartitions(inferenceOnPartion)
-
 start = time.process_time()
+rdd = df.rdd.mapPartitions(inferenceOnPartion)
 result = rdd.collect()
 elapsed_time = time.process_time() - start
 print(result)
-print(elapsed_time)
+print("Elapsed time in seconds: ", elapsed_time)

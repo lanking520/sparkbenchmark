@@ -12,8 +12,8 @@
  */
 package com.examples
 
-import ai.djl.ndarray.types.{DataType, Shape}
-import ai.djl.ndarray.{NDArrays, NDList}
+import ai.djl.ndarray.types.Shape
+import ai.djl.ndarray.NDList
 import ai.djl.repository.zoo.{Criteria, ModelZoo, ZooModel}
 import ai.djl.training.util.ProgressBar
 import ai.djl.translate.{Batchifier, Translator, TranslatorContext}
@@ -60,6 +60,8 @@ object DataProcessExample {
     val sc = new SparkContext(conf)
 
     val partitions = sc.textFile("players.csv")
+    // Start time measurement
+    val startTime = System.nanoTime
     // Start assign work for each worker node
     val result = partitions.mapPartitions(partition => {
       // We need to make sure predictor are spawned on a executor basis to save memory
@@ -70,7 +72,6 @@ object DataProcessExample {
       })
     })
     // The real execution started here
-    val startTime = System.nanoTime
     val data = result.collect()
     val estimatedTime = System.nanoTime - startTime
     println(data)
