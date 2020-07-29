@@ -19,9 +19,6 @@ import ai.djl.training.util.ProgressBar
 import ai.djl.translate.{Batchifier, Translator, TranslatorContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
-/**
- * Scratch example to load model from path and do customized operations for the input and output.
- */
 object DataProcessExample {
 
   private lazy val model = loadModel()
