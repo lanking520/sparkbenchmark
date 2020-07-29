@@ -45,7 +45,7 @@ object DataProcessExample {
       list
     }
 
-    override def getBatchifier: Batchifier = Batchifier.STACK
+    override def getBatchifier: Batchifier = null
   }
 
   def main(args: Array[String]) {
@@ -62,7 +62,7 @@ object DataProcessExample {
       // We need to make sure predictor are spawned on a executor basis to save memory
       val predictor = model.newPredictor()
       partition.map(streamData => {
-        val array = model.getNDManager.ones(new Shape(3, 224, 224))
+        val array = model.getNDManager.ones(new Shape(1, 3, 224, 224))
         predictor.predict(new NDList(array)).singletonOrThrow().getShape.toString
       })
     })
