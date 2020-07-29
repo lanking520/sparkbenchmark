@@ -17,6 +17,8 @@ import ai.djl.ndarray.NDList
 import ai.djl.repository.zoo.{Criteria, ModelZoo, ZooModel}
 import ai.djl.training.util.ProgressBar
 import ai.djl.translate.{Batchifier, Translator, TranslatorContext}
+import org.apache.spark
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
 object DataProcessExample {
@@ -50,15 +52,14 @@ object DataProcessExample {
 
   def main(args: Array[String]) {
 
-    // Spark configuration
-    val conf = new SparkConf()
-      .setAppName("DJL Benchmark Job")
-      .setMaster("spark://localhost:7077")
-    val sc = new SparkContext(conf)
+    val spark = SparkSession.builder()
+      .appName("DJL Benchmark Job")
+      .master("spark://localhost:7077")
+      .getOrCreate()
 
-    val partitions = sc.textFile("players.csv")
+    val df = spark.read.option("header", true).option("mode", "DROPMALFORMED").csv("players.csv")
     // Start assign work for each worker node
-    val result = partitions.mapPartitions(partition => {
+    val result = df.rdd.mapPartitions(partition => {
       // We need to make sure predictor are spawned on a executor basis to save memory
       val predictor = model.newPredictor()
       partition.map(streamData => {
@@ -66,6 +67,7 @@ object DataProcessExample {
         predictor.predict(new NDList(array)).singletonOrThrow().getShape.toString
       })
     })
+
     // The real execution started here
     result.collect()
   }

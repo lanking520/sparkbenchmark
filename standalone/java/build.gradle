@@ -19,6 +19,7 @@ targetCompatibility = 1.8
 dependencies {
     implementation "org.scala-lang:scala-library:2.11.12"
     implementation "org.apache.spark:spark-core_2.11:2.4.6"
+    implementation "org.apache.spark:spark-sql_2.11:2.4.6"
     implementation "ai.djl:api:0.6.0"
 
     runtimeOnly "ai.djl.pytorch:pytorch-model-zoo:0.6.0"
