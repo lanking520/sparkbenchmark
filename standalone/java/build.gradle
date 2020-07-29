@@ -38,4 +38,13 @@ application {
     mainClassName = System.getProperty("main", "com.examples.DataProcessExample")
 }
 
+shadowJar {
+    zip64 true
+    mergeServiceFiles()
+    exclude "META-INF/*.SF"
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude "LICENSE*"
+}
+
 tasks.distTar.enabled = false
