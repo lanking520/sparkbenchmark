@@ -64,7 +64,11 @@ object DataProcessExample {
       val predictor = model.newPredictor()
       partition.map(streamData => {
         val array = model.getNDManager.ones(new Shape(1, 3, 224, 224))
-        predictor.predict(new NDList(array)).singletonOrThrow().getShape.toString
+        val out = predictor.predict(new NDList(array)).singletonOrThrow()
+        val shape = out.getShape
+        array.close()
+        out.close()
+        shape.toString
       })
     })
 
